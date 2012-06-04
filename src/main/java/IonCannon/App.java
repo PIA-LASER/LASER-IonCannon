@@ -2,9 +2,11 @@ package IonCannon;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
+import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
@@ -30,11 +32,18 @@ public class App extends Configured implements Tool
         conf.set("mapred.job.tracker", "localhost:54311");
         conf.set("fs.default.name", "hdfs://localhost:54310/");
 
+        //sampler configuration
+        conf.set("strengthToLinkFactor", "1");
+        conf.set("numberOfLinksPerCategory", "1500");
+
+        FileSystem fs = FileSystem.get(conf);
+        fs.delete(outputPath, true);
+
         Job job = new Job(conf);
 
         job.setMapperClass(SamplingMapper.class);
-        job.setMapOutputKeyClass(LongWritable.class);
-        job.setMapOutputValueClass(IntWritable.class);
+        job.setMapOutputKeyClass(IntWritable.class);
+        job.setMapOutputValueClass(Text.class);
         job.setReducerClass(SamplingReducer.class);
 
         job.setInputFormatClass(TextInputFormat.class);

@@ -12,6 +12,8 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <IonCannon.target.jar>target/IonCannon-1.0-jar-with-dependencies.jar</IonCannon.target.jar>
     </properties>
 
     <build>
@@ -29,6 +31,25 @@
                     </descriptorRefs>
                 </configuration>
             </plugin>
+
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <executions>
+                <execution>
+                    <goals>
+                        <goal>exec</goal>
+                    </goals>
+                </execution>
+            </executions>
+            <configuration>
+                <executable>java</executable>
+                <arguments>
+                    <argument>-jar</argument>
+                    <argument>${project.basedir}/${IonCannon.target.jar}</argument>
+                </arguments>
+            </configuration>
+        </plugin>
         </plugins>
     </build>
 
@@ -36,7 +57,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>3.8.1</version>
+            <version>4.8.1</version>
             <scope>test</scope>
         </dependency>
 
@@ -50,6 +71,13 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-jcl</artifactId>
             <version>1.6.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.9.0</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 </project>
