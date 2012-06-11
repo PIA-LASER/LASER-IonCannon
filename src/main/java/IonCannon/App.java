@@ -36,8 +36,20 @@ public class App extends Configured implements Tool
         conf.set("strengthToLinkFactor", "1");
         conf.set("numberOfLinksPerCategory", "1500");
 
+
         FileSystem fs = FileSystem.get(conf);
         fs.delete(outputPath, true);
+
+        //configure gauss sampler
+        conf.set("sampler_nUsers", "100"); //int
+        conf.set("sampler_nTopics", "100"); //int
+        conf.set("sampler_maxSpots", "20"); //int
+        conf.set("sampler_defSigma", "2.0"); //float
+        conf.set("sampler_minYVal", "0.005"); // float
+
+        Path userConfigsPath = new Path(inputPath, "userConfigurations");
+        //sample user configuration
+        UserConfigurationSampler.sampleGaussConfigurations(conf, fs, userConfigsPath);
 
         Job job = new Job(conf);
 
