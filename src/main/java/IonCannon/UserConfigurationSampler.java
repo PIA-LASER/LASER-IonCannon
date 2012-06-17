@@ -1,9 +1,13 @@
 package IonCannon;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Random;
+
+import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.conf.Configuration;
@@ -57,20 +61,33 @@ public class UserConfigurationSampler {
         //write sampled users to file
         FSDataOutputStream output = fs.create(targetPath);
         Iterator iter = users.iterator();
+
         while(iter.hasNext()) {
             StringBuffer buf = new StringBuffer();
             float[] topics = (float[]) iter.next();
+
             for(int i = 0; i < topics.length; i++) {
-                if(topics[i] == 0)
-                    buf.append("0");
-                else buf.append(topics[i]);
-                if(i < topics.length - 1)
-                    buf.append(",");
+                if(topics[i] == 0) {
+                    byte[] zeroString = new String("0").getBytes();
+                    output.write(zeroString,0, zeroString.length);
+                } else  {
+                    byte[] actualOutput = new Float(topics[i]).toString().getBytes();
+                    output.write(actualOutput,0, actualOutput.length);
+                }
+
+                if(i < topics.length - 1) {
+                    byte[] sep = ",".getBytes();
+                    output.write(sep,0,sep.length);
+                }
             }
-            if(iter.hasNext())
-                buf.append("\n");
-            new Text(buf.toString()).write(output);
+
+            if(iter.hasNext()) {
+                byte[] newline = "\n".getBytes();
+                output.write(newline, 0, newline.length);
+                output.flush();
+            }
         }
+
         output.close();
     }
 }
