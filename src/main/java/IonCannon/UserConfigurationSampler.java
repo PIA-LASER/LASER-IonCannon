@@ -8,6 +8,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FSDataOutputStream;
+import org.apache.hadoop.io.Text;
 
 public class UserConfigurationSampler {
     public static void sampleGaussConfigurations(Configuration config, FileSystem fs, Path targetPath) throws IOException {
@@ -57,17 +58,18 @@ public class UserConfigurationSampler {
         FSDataOutputStream output = fs.create(targetPath);
         Iterator iter = users.iterator();
         while(iter.hasNext()) {
+            StringBuffer buf = new StringBuffer();
             float[] topics = (float[]) iter.next();
             for(int i = 0; i < topics.length; i++) {
                 if(topics[i] == 0)
-                    output.writeInt(0);
-                else
-                    output.writeFloat(topics[i]);
+                    buf.append("0");
+                else buf.append(topics[i]);
                 if(i < topics.length - 1)
-                    output.writeUTF(",");
+                    buf.append(",");
             }
             if(iter.hasNext())
-                output.writeUTF("\n");
+                buf.append("\n");
+            new Text(buf.toString()).write(output);
         }
         output.close();
     }
