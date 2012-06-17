@@ -41,11 +41,12 @@ public class App extends Configured implements Tool
         fs.delete(outputPath, true);
 
         //configure gauss sampler
-        conf.set("sampler_nUsers", "100"); //int
+        conf.set("sampler_nUsers", "100000"); //int
         conf.set("sampler_nTopics", "100"); //int
         conf.set("sampler_maxSpots", "20"); //int
         conf.set("sampler_defSigma", "2.0"); //float
         conf.set("sampler_minYVal", "0.005"); // float
+        conf.set("sample.buffer.mb", "30");
 
         Path userConfigsPath = new Path(inputPath, "userConfigurations");
         //sample user configuration
