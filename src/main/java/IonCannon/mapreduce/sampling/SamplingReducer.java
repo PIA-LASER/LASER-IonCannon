@@ -1,4 +1,4 @@
-package IonCannon;
+package IonCannon.mapreduce.sampling;
 
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;

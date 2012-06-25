@@ -1,5 +1,10 @@
 package IonCannon;
 
+import IonCannon.io.RedisOutputFormat;
+import IonCannon.mapreduce.mapping.SampleToUrlMapper;
+import IonCannon.mapreduce.mapping.SampleToUrlReducer;
+import IonCannon.mapreduce.sampling.SamplingMapper;
+import IonCannon.mapreduce.sampling.SamplingReducer;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
@@ -27,6 +32,8 @@ public class App extends Configured implements Tool
 
         Path inputPath = new Path("sample/input");
         Path outputPath = new Path("sample/output");
+        Path urlMappingInputPath = new Path("sample/mapping");
+        Path urlMappingOutput = new Path("sample/mappingoutput");
 
         Configuration conf = new Configuration();
         conf.set("mapred.job.tracker", "localhost:54311");
@@ -34,24 +41,27 @@ public class App extends Configured implements Tool
 
         //sampler configuration
         conf.set("strengthToLinkFactor", "1");
-        conf.set("numberOfLinksPerCategory", "1500");
+        conf.set("numberOfLinksPerCategory", "50");
 
 
         FileSystem fs = FileSystem.get(conf);
         fs.delete(outputPath, true);
+        fs.delete(urlMappingOutput, true);
 
         //configure gauss sampler
-        conf.set("sampler_nUsers", "100000"); //int
-        conf.set("sampler_nTopics", "100"); //int
-        conf.set("sampler_maxSpots", "20"); //int
+        conf.set("sampler_nUsers", "10"); //int
+        conf.set("sampler_nTopics", "5"); //int
+        conf.set("sampler_maxSpots", "2"); //int
         conf.set("sampler_defSigma", "2.0"); //float
         conf.set("sampler_minYVal", "0.005"); // float
         conf.set("sample.buffer.mb", "30");
 
         Path userConfigsPath = new Path(inputPath, "userConfigurations");
-        //sample user configuration
+
+        //sample user configurations
         UserConfigurationSampler.sampleGaussConfigurations(conf, fs, userConfigsPath);
 
+        //sample users
         Job job = new Job(conf);
 
         job.setMapperClass(SamplingMapper.class);
@@ -69,12 +79,36 @@ public class App extends Configured implements Tool
 
         boolean success = job.waitForCompletion(true);
 
-        if(success) {
-            logger.info("Sampling finished successfully.");
-            return 0;
+        if(!success) {
+            logger.info("Sampling user failed.");
+            return -1;
         }
 
-        return -1;
+        conf.set("redisHost","127.0.0.1");
+
+        Job mapUrlsToItemIdsJob = new Job(conf);
+
+        mapUrlsToItemIdsJob.setMapperClass(SampleToUrlMapper.class);
+        mapUrlsToItemIdsJob.setMapOutputKeyClass(LongWritable.class);
+        mapUrlsToItemIdsJob.setMapOutputValueClass(LongWritable.class);
+        mapUrlsToItemIdsJob.setReducerClass(SampleToUrlReducer.class);
+
+        mapUrlsToItemIdsJob.setInputFormatClass(TextInputFormat.class);
+        mapUrlsToItemIdsJob.setOutputFormatClass(RedisOutputFormat.class);
+
+        FileInputFormat.setInputPaths(mapUrlsToItemIdsJob, outputPath);
+        FileOutputFormat.setOutputPath(mapUrlsToItemIdsJob, urlMappingOutput);
+
+        mapUrlsToItemIdsJob.setJarByClass(App.class);
+
+        success = mapUrlsToItemIdsJob.waitForCompletion(true);
+
+        if(!success) {
+            logger.info("Sampling user failed.");
+            return -1;
+        }
+
+        return 0;
     }
 
     public static void main(String[] args) throws Exception {

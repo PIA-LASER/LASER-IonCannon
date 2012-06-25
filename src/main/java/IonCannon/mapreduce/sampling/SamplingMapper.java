@@ -1,4 +1,4 @@
-package IonCannon;
+package IonCannon.mapreduce.sampling;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.*;
@@ -43,14 +43,14 @@ public class SamplingMapper extends Mapper<LongWritable, Text, IntWritable, Text
     @Override
     public void map(LongWritable line, Text input, Context context) throws IOException, InterruptedException {
         String[] parsedConfigs = pattern.split(input.toString());
-        Integer[] config = new Integer[parsedConfigs.length];
+        Float[] config = new Float[parsedConfigs.length];
 
         for (int i = 0; i < parsedConfigs.length; i++) {
-            config[i] = Integer.parseInt(parsedConfigs[i]);
+            config[i] = Float.parseFloat(parsedConfigs[i]);
         }
 
         for (int i = 0; i < config.length; i++) {
-            int numberOfLinksForCategory = config[i] * strengthToLinkFactor;
+            float numberOfLinksForCategory = config[i] * strengthToLinkFactor;
             HashSet<Integer> linksInCategory = new HashSet<Integer>();
 
             while (true) {
@@ -62,7 +62,7 @@ public class SamplingMapper extends Mapper<LongWritable, Text, IntWritable, Text
                 Random random = new Random();
 
                 //next random link index in this category
-                int nextLinkIndex = random.nextInt(numberOfLinksPerCategory);
+                int nextLinkIndex = random.nextInt(numberOfLinksPerCategory) + (i * numberOfLinksPerCategory );
 
                 if (linksInCategory.contains(nextLinkIndex)) {
                     continue;
