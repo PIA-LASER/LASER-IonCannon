@@ -39,7 +39,7 @@ public class SampleToUrlReducer extends Reducer<LongWritable, LongWritable, Stri
                 numberOfLinksPerCategory = tmp;
         }
 
-        Path mappingPath = new Path("sample/mapping");
+        Path mappingPath = new Path("Laser/sampling/input");
         FileSystem fs = FileSystem.get(context.getConfiguration());
 
         FileStatus[] stats = fs.listStatus(mappingPath);

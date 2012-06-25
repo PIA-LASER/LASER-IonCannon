@@ -30,10 +30,9 @@ public class App extends Configured implements Tool
     {
         Logger logger = LoggerFactory.getLogger(App.class);
 
-        Path inputPath = new Path("sample/input");
-        Path outputPath = new Path("sample/output");
-        Path urlMappingInputPath = new Path("sample/mapping");
-        Path urlMappingOutput = new Path("sample/mappingoutput");
+        Path inputPath = new Path("Laser/sampling/input");
+        Path outputPath = new Path("Laser/recommendation/output");
+        Path urlMappingOutput = new Path("Laser/sampling/mappingoutput");
 
         Configuration conf = new Configuration();
         conf.set("mapred.job.tracker", "master:54311");
