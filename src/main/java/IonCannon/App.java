@@ -36,8 +36,8 @@ public class App extends Configured implements Tool
         Path urlMappingOutput = new Path("sample/mappingoutput");
 
         Configuration conf = new Configuration();
-        conf.set("mapred.job.tracker", "localhost:54311");
-        conf.set("fs.default.name", "hdfs://localhost:54310/");
+        conf.set("mapred.job.tracker", "master:54311");
+        conf.set("fs.default.name", "hdfs://master:54310/");
 
         //sampler configuration
         conf.set("strengthToLinkFactor", "1");
