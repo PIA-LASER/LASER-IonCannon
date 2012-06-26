@@ -31,7 +31,7 @@ public class App extends Configured implements Tool
         Logger logger = LoggerFactory.getLogger(App.class);
 
         Path inputPath = new Path("Laser/sampling/input");
-        Path outputPath = new Path("Laser/recommendation/output");
+        Path outputPath = new Path("Laser/recommendation/input");
         Path urlMappingOutput = new Path("Laser/sampling/mappingoutput");
 
         Configuration conf = new Configuration();
@@ -39,20 +39,21 @@ public class App extends Configured implements Tool
         conf.set("fs.default.name", "hdfs://master:54310/");
 
         //sampler configuration
-        conf.set("strengthToLinkFactor", "1");
+        conf.set("strengthToLinkFactor", "10");
         conf.set("numberOfLinksPerCategory", "50");
 
 
         FileSystem fs = FileSystem.get(conf);
         fs.delete(outputPath, true);
         fs.delete(urlMappingOutput, true);
+	fs.delete(inputPath,true);
 
         //configure gauss sampler
-        conf.set("sampler_nUsers", "10"); //int
+        conf.set("sampler_nUsers", "100"); //int
         conf.set("sampler_nTopics", "5"); //int
-        conf.set("sampler_maxSpots", "2"); //int
-        conf.set("sampler_defSigma", "2.0"); //float
-        conf.set("sampler_minYVal", "0.005"); // float
+        conf.set("sampler_maxSpots", "1"); //int
+        conf.set("sampler_defSigma", "0.5"); //float
+        conf.set("sampler_minYVal", "0.5"); // float
         conf.set("sample.buffer.mb", "30");
 
         Path userConfigsPath = new Path(inputPath, "userConfigurations");
@@ -83,7 +84,7 @@ public class App extends Configured implements Tool
             return -1;
         }
 
-        conf.set("redisHost","127.0.0.1");
+        conf.set("redisHost","10.239.9.254");
 
         Job mapUrlsToItemIdsJob = new Job(conf);
 

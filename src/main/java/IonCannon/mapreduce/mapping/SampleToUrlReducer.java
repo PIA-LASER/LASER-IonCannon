@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 
 public class SampleToUrlReducer extends Reducer<LongWritable, LongWritable, String, String[]> {
 
-    private static final String SEPARATOR = "[,\t]";
+    private static final String SEPARATOR = "[,]";
     private static Pattern pattern = Pattern.compile(SEPARATOR);
     private static int numberOfLinksPerCategory = 1500;
 
@@ -39,7 +39,7 @@ public class SampleToUrlReducer extends Reducer<LongWritable, LongWritable, Stri
                 numberOfLinksPerCategory = tmp;
         }
 
-        Path mappingPath = new Path("Laser/sampling/input");
+        Path mappingPath = new Path("Laser/sampling/mapping");
         FileSystem fs = FileSystem.get(context.getConfiguration());
 
         FileStatus[] stats = fs.listStatus(mappingPath);
