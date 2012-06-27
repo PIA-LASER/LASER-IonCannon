@@ -3,6 +3,7 @@ package IonCannon.mapreduce.sampling;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.*;
 import org.apache.hadoop.mapreduce.Mapper;
+import redis.clients.jedis.Jedis;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -49,6 +50,9 @@ public class SamplingMapper extends Mapper<LongWritable, Text, IntWritable, Text
             config[i] = Float.parseFloat(parsedConfigs[i]);
         }
 
+        String redisHost = context.getConfiguration().get("redisHost");
+        Jedis con = new Jedis(redisHost);
+
         for (int i = 0; i < config.length; i++) {
             float numberOfLinksForCategory = config[i] * strengthToLinkFactor;
             HashSet<Integer> linksInCategory = new HashSet<Integer>();
@@ -72,9 +76,14 @@ public class SamplingMapper extends Mapper<LongWritable, Text, IntWritable, Text
                     String linkIndexInCategory = new Integer(nextLinkIndex).toString();
                     String output = categoryIndex + "," + linkIndexInCategory;
 
+                    con.rpush("user."+line.get()+".links",linkIndexInCategory);
+
+
                     context.write(new IntWritable((int) line.get()), new Text(output));
                 }
             }
         }
+
+        con.disconnect();
     }
 }

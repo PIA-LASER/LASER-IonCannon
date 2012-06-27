@@ -37,24 +37,24 @@ public class App extends Configured implements Tool
         Configuration conf = new Configuration();
         conf.set("mapred.job.tracker", "master:54311");
         conf.set("fs.default.name", "hdfs://master:54310/");
+        conf.set("redisHost","192.168.0.103");
 
         //sampler configuration
-        conf.set("strengthToLinkFactor", "10");
-        conf.set("numberOfLinksPerCategory", "50");
-
-
         FileSystem fs = FileSystem.get(conf);
         fs.delete(outputPath, true);
         fs.delete(urlMappingOutput, true);
-	fs.delete(inputPath,true);
+	    fs.delete(inputPath,true);
 
         //configure gauss sampler
         conf.set("sampler_nUsers", "100"); //int
         conf.set("sampler_nTopics", "5"); //int
+        conf.set("strengthToLinkFactor", "10");
+        conf.set("numberOfLinksPerCategory", "50");
         conf.set("sampler_maxSpots", "1"); //int
         conf.set("sampler_defSigma", "0.5"); //float
         conf.set("sampler_minYVal", "0.5"); // float
         conf.set("sample.buffer.mb", "30");
+        conf.set("linkTimespan","30");
 
         Path userConfigsPath = new Path(inputPath, "userConfigurations");
 
@@ -83,8 +83,6 @@ public class App extends Configured implements Tool
             logger.info("Sampling user failed.");
             return -1;
         }
-
-        conf.set("redisHost","10.239.9.254");
 
         Job mapUrlsToItemIdsJob = new Job(conf);
 
