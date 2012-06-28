@@ -21,6 +21,7 @@ import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import redis.clients.jedis.Jedis;
 
 import java.io.IOException;
 
@@ -37,7 +38,12 @@ public class App extends Configured implements Tool
         Configuration conf = new Configuration();
         conf.set("mapred.job.tracker", "master:54311");
         conf.set("fs.default.name", "hdfs://master:54310/");
-        conf.set("redisHost","192.168.0.103");
+        conf.set("redisHost","master");
+
+        Jedis redisConnection = new Jedis(conf.get("redisHost"));
+
+        redisConnection.flushAll();
+        redisConnection.disconnect();
 
         //sampler configuration
         FileSystem fs = FileSystem.get(conf);

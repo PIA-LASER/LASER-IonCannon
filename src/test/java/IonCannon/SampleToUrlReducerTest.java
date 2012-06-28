@@ -3,7 +3,9 @@ package IonCannon;
 import IonCannon.io.RedisOutputFormat;
 import IonCannon.mapreduce.mapping.SampleToUrlMapper;
 import IonCannon.mapreduce.mapping.SampleToUrlReducer;
+import IonCannon.mapreduce.sampling.SamplingReducer;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -70,6 +72,15 @@ public class SampleToUrlReducerTest {
         SampleToUrlReducer reducer = new SampleToUrlReducer();
         reducer.setup(context);
         reducer.reduce(key, al, context);
+    }
+
+    @Test
+    public void timestamp() throws IOException, InterruptedException{
+        SamplingReducer reducer = new SamplingReducer();
+        ArrayList bla = new ArrayList();
+        bla.add(new Text("3,2,1"));
+        Reducer.Context context = mock(Reducer.Context.class);
+        reducer.reduce(new IntWritable(3), bla, context);
     }
 
     @Test
