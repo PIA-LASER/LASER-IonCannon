@@ -12,7 +12,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-public class SamplingMapper extends Mapper<LongWritable, Text, IntWritable, Text> {
+public class SamplingMapper extends Mapper<LongWritable, Text, LongWritable, Text> {
 
     private static final String SEPARATOR = "[,\t]";
     private static Pattern pattern = Pattern.compile(SEPARATOR);
@@ -44,10 +44,12 @@ public class SamplingMapper extends Mapper<LongWritable, Text, IntWritable, Text
     @Override
     public void map(LongWritable line, Text input, Context context) throws IOException, InterruptedException {
         String[] parsedConfigs = pattern.split(input.toString());
-        Float[] config = new Float[parsedConfigs.length];
 
-        for (int i = 0; i < parsedConfigs.length; i++) {
-            config[i] = Float.parseFloat(parsedConfigs[i]);
+        Float[] config = new Float[parsedConfigs.length - 1];
+        long userID = Long.parseLong(parsedConfigs[0]);
+
+        for (int i = 1; i < parsedConfigs.length; i++) {
+            config[i - 1] = Float.parseFloat(parsedConfigs[i]);
         }
 
         String redisHost = context.getConfiguration().get("redisHost");
@@ -79,7 +81,7 @@ public class SamplingMapper extends Mapper<LongWritable, Text, IntWritable, Text
                     con.rpush("user."+line.get()+".links",linkIndexInCategory);
 
 
-                    context.write(new IntWritable((int) line.get()), new Text(output));
+                    context.write(new LongWritable(userID), new Text(output));
                 }
             }
         }

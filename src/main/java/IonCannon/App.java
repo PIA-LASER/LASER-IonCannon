@@ -71,7 +71,7 @@ public class App extends Configured implements Tool
         Job job = new Job(conf);
 
         job.setMapperClass(SamplingMapper.class);
-        job.setMapOutputKeyClass(IntWritable.class);
+        job.setMapOutputKeyClass(LongWritable.class);
         job.setMapOutputValueClass(Text.class);
         job.setReducerClass(SamplingReducer.class);
 

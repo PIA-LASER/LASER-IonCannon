@@ -1,6 +1,7 @@
 package IonCannon.mapreduce.sampling;
 
 import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.RecordWriter;
 import org.apache.hadoop.mapreduce.Reducer;
@@ -9,12 +10,12 @@ import redis.clients.jedis.Jedis;
 import java.io.IOException;
 import java.util.ArrayList;
 
-public class SamplingReducer extends Reducer<IntWritable, Text, Text, Text> {
+public class SamplingReducer extends Reducer<LongWritable, Text, Text, Text> {
 
     @Override
-    public void reduce(IntWritable userId, Iterable<Text> userPrefs, Context context) throws IOException, InterruptedException{
+    public void reduce(LongWritable userId, Iterable<Text> userPrefs, Context context) throws IOException, InterruptedException{
         for(Text pref : userPrefs) {
-            String output = new Integer(userId.get()).toString() + "," + pref.toString();
+            String output = new Long(userId.get()).toString() + "," + pref.toString();
             long currentTime = System.currentTimeMillis() / 1000L;
             long randomOffset = (long)(Math.random() * ((864000)));
 

@@ -73,9 +73,13 @@ public class UserConfigurationSampler {
 
     public static void writeSampleBufferToHDFS(FileSystem fs, FSDataOutputStream output, Path targetPath, ArrayList users) throws IOException{
         Iterator userIter = users.iterator();
+        long userID = 0;
 
         while (userIter.hasNext()) {
             float[] topics = (float[]) userIter.next();
+
+            byte[] userIDString = new String(Long.toString(userID)).getBytes();
+            output.write(userIDString, 0, userIDString.length);
 
             for (int j = 0; j < topics.length; j++) {
                 if (topics[j] == 0) {
@@ -92,10 +96,10 @@ public class UserConfigurationSampler {
                 }
             }
 
-
             byte[] newline = "\n".getBytes();
             output.write(newline, 0, newline.length);
             output.flush();
+            userID++;
         }
     }
 }
