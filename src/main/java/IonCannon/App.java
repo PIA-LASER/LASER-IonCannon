@@ -56,8 +56,8 @@ public class App extends Configured implements Tool
         conf.set("sampler_nTopics", "5"); //int
         conf.set("strengthToLinkFactor", "10");
         conf.set("numberOfLinksPerCategory", "50");
-        conf.set("sampler_maxSpots", "1"); //int
-        conf.set("sampler_defSigma", "0.5"); //float
+        conf.set("sampler_maxSpots", "2"); //int
+        conf.set("sampler_defSigma", "0.1"); //float
         conf.set("sampler_minYVal", "0.5"); // float
         conf.set("sample.buffer.mb", "30");
         conf.set("linkTimespan","30");
@@ -90,6 +90,7 @@ public class App extends Configured implements Tool
             return -1;
         }
 
+
         Job mapUrlsToItemIdsJob = new Job(conf);
 
         mapUrlsToItemIdsJob.setMapperClass(SampleToUrlMapper.class);
@@ -105,7 +106,7 @@ public class App extends Configured implements Tool
 
         mapUrlsToItemIdsJob.setJarByClass(App.class);
 
-        success = mapUrlsToItemIdsJob.waitForCompletion(true);
+        //success = mapUrlsToItemIdsJob.waitForCompletion(true);
 
         if(!success) {
             logger.info("Sampling user failed.");

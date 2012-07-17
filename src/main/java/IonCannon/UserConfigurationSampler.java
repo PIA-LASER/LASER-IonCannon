@@ -78,7 +78,7 @@ public class UserConfigurationSampler {
         while (userIter.hasNext()) {
             float[] topics = (float[]) userIter.next();
 
-            byte[] userIDString = new String(Long.toString(userID)).getBytes();
+            byte[] userIDString = (new String(Long.toString(userID)) + ",").getBytes();
             output.write(userIDString, 0, userIDString.length);
 
             for (int j = 0; j < topics.length; j++) {
