@@ -86,7 +86,7 @@ public class SamplingMapper extends Mapper<LongWritable, Text, LongWritable, Tex
 
                     con.set("urls." + linkIndexInCategory + ".timestamp", new Long(timestamp).toString());
 
-                    con.rpush("user."+line.get()+".links",linkIndexInCategory);
+                    con.rpush("user."+ userID +".links",linkIndexInCategory);
 
 
                     context.write(new LongWritable(userID), new Text(output));
