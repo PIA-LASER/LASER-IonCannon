@@ -81,7 +81,7 @@ public class SamplingMapper extends Mapper<LongWritable, Text, LongWritable, Tex
 
                     long currentTime = System.currentTimeMillis() / 1000L;
                     long randomOffset = (long) (Math.random() * ((864000)));
-                    long timestamp = randomOffset;
+                    long timestamp = currentTime - randomOffset;
                     output += "," + timestamp;
 
                     con.set("urls." + linkIndexInCategory + ".timestamp", new Long(timestamp).toString());
