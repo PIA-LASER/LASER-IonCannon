@@ -43,7 +43,6 @@ public class SamplingMapper extends Mapper<LongWritable, Text, LongWritable, Tex
 
     @Override
     public void map(LongWritable line, Text input, Context context) throws IOException, InterruptedException {
-        System.out.println( input.toString());
         String[] parsedConfigs = pattern.split(input.toString());
 
         Float[] config = new Float[parsedConfigs.length - 1];
@@ -79,12 +78,12 @@ public class SamplingMapper extends Mapper<LongWritable, Text, LongWritable, Tex
                     String linkIndexInCategory = new Integer(nextLinkIndex).toString();
                     String output = categoryIndex + "," + linkIndexInCategory;
 
-                    long currentTime = System.currentTimeMillis() / 1000L;
-                    long randomOffset = (long) (Math.random() * ((864000)));
-                    long timestamp = currentTime - randomOffset;
-                    output += "," + timestamp;
+                    //long currentTime = System.currentTimeMillis() / 1000L;
+                    //long randomOffset = (long) (Math.random() * ((864000)));
+                    //long timestamp = currentTime - randomOffset;
+                    //output += "," + timestamp;
 
-                    con.set("urls." + linkIndexInCategory + ".timestamp", new Long(timestamp).toString());
+                    //con.set("urls." + linkIndexInCategory + ".timestamp", new Long(timestamp).toString());
 
                     con.rpush("user."+ userID +".links",linkIndexInCategory);
 

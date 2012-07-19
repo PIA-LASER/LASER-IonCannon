@@ -49,7 +49,7 @@ public class App extends Configured implements Tool
         FileSystem fs = FileSystem.get(conf);
         fs.delete(outputPath, true);
         fs.delete(urlMappingOutput, true);
-	    fs.delete(inputPath,true);
+        //fs.delete(inputPath,true);
 
         //configure gauss sampler
         conf.set("sampler_nUsers", "100"); //int
@@ -65,7 +65,7 @@ public class App extends Configured implements Tool
         Path userConfigsPath = new Path(inputPath, "userConfigurations");
 
         //sample user configurations
-        UserConfigurationSampler.sampleGaussConfigurations(conf, fs, userConfigsPath);
+        //UserConfigurationSampler.sampleGaussConfigurations(conf, fs, userConfigsPath);
 
         //sample users
         Job job = new Job(conf);
@@ -90,7 +90,7 @@ public class App extends Configured implements Tool
             return -1;
         }
 
-
+	
         Job mapUrlsToItemIdsJob = new Job(conf);
 
         mapUrlsToItemIdsJob.setMapperClass(SampleToUrlMapper.class);
@@ -106,7 +106,7 @@ public class App extends Configured implements Tool
 
         mapUrlsToItemIdsJob.setJarByClass(App.class);
 
-        //success = mapUrlsToItemIdsJob.waitForCompletion(true);
+        success = mapUrlsToItemIdsJob.waitForCompletion(true);
 
         if(!success) {
             logger.info("Sampling user failed.");

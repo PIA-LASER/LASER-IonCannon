@@ -81,7 +81,6 @@ public class SampleToUrlReducer extends Reducer<LongWritable, LongWritable, Stri
             long actualLinkId = (categoryId.get() * numberOfLinksPerCategory) + linkId.get();
 
             String[] output = new String[]{new String(urls.get((int)linkId.get())), new String(titles.get((int)linkId.get()))};
-            System.out.println(output[0] + " " + output[1]);
 
             context.write(new String(new Long(actualLinkId).toString()), output);
         }

@@ -32,7 +32,6 @@ public class SampleToUrlMapper extends Mapper<LongWritable, Text, LongWritable, 
         long categoryId = Long.parseLong(parsedConfigs[1]);
         long linkId = Long.parseLong(parsedConfigs[2]);
 
-        System.out.println(categoryId +" "+ linkId);
 
         //category * numberOfLinksPerCategory = offset
         linkId = linkId - (categoryId * numberOfLinksPerCategory);
